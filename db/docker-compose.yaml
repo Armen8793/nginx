@@ -1,0 +1,31 @@
+version: "3.8"
+
+networks:
+  project-net:
+    external: true 
+
+volumes:
+  mongo_data:
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    networks:
+      - project-net
+    command: ["redis-server"]
+
+  mongo:
+    image: mongo:4.4
+    container_name: mongo
+    restart: always
+    networks:
+      - project-net
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PWD}
+      MONGO_INITDB_DATABASE: ${DB}
+    volumes:
+      - mongo_data:/data/db
+
