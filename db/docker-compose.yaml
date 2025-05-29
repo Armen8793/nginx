@@ -2,7 +2,7 @@ version: "3.8"
 
 networks:
   project-net:
-    external: true 
+    external: true
 
 volumes:
   mongo_data:
@@ -15,6 +15,11 @@ services:
     networks:
       - project-net
     command: ["redis-server"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   mongo:
     image: mongo:4.4
@@ -28,4 +33,8 @@ services:
       MONGO_INITDB_DATABASE: ${DB}
     volumes:
       - mongo_data:/data/db
-
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
